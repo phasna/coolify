@@ -1,0 +1,27 @@
+services:
+  web:
+    image: php:8.2-apache
+    ports:
+      - "8081:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=chat_db
+      - DB_USER=chat_user
+      - DB_PASSWORD=Motdepasse2026
+
+  db:
+    image: mariadb:10.6
+    environment:
+      MYSQL_DATABASE: chat_db
+      MYSQL_USER: chat_user
+      MYSQL_PASSWORD: Motdepasse2026
+      MYSQL_ROOT_PASSWORD: Motdepasse2026
+    volumes:
+      - chat_db_data:/var/lib/mysql
+
+volumes:
+  chat_db_data:
