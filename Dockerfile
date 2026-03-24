@@ -1,5 +1,8 @@
 FROM php:8.2-apache
 
+# Extension PDO MySQL pour la connexion à MariaDB
+RUN docker-php-ext-install pdo pdo_mysql
+
 # Configuration Apache pour éviter le 403
 COPY apache-config.conf /etc/apache2/conf-available/chatlog.conf
 RUN a2enconf chatlog

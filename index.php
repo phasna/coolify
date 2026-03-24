@@ -12,7 +12,7 @@ try {
 }
 
 // Envoi d'un message
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['username']) && !empty($_POST['message'])) {
+if (isset($pdo) && $_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['username']) && !empty($_POST['message'])) {
     $username = htmlspecialchars($_POST['username']);
     $message = htmlspecialchars($_POST['message']);
 
@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['username']) && !empty
         </form>
         <div id="messages">
             <?php
+            if (isset($pdo)) {
             $stmt = $pdo->query('SELECT username, message, created_at FROM messages ORDER BY created_at DESC');
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 echo '<div class="alert alert-secondary" role="alert">';
@@ -55,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !empty($_POST['username']) && !empty
                 echo htmlspecialchars($row['message']);
                 echo '<br><small>' . $row['created_at'] . '</small>';
                 echo '</div>';
+            }
             }
             ?>
         </div>
