@@ -1,0 +1,11 @@
+groups:
+  - name: chat-down
+    rules:
+      - alert: ChatApplicationDown
+        expr: probe_success{job="chat-php"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application Chat PHP down"
+          description: "L'application chat ({{ $labels.instance }}) est inaccessible depuis plus de 1 minute."

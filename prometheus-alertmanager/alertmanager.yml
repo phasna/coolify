@@ -1,0 +1,16 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ["alertname", "job"]
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 3h
+  receiver: discord
+
+receivers:
+  - name: discord
+    discord_configs:
+      # REMPLACER par votre webhook Discord (créer dans Discord : Paramètres du salon → Intégrations → Webhooks)
+      - webhook_url: "https://discord.com/api/webhooks/1486032579613167829/543Ob00NiOcIqhQsIA7u1wmXMeV47lLPQ2BID8TxCjzGSu8-8fbuPmGr9kxykj5Ovqc8"
+        send_resolved: true
