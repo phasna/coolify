@@ -1,0 +1,26 @@
+stages:
+  - notify
+
+notify_discord_push:
+  stage: notify
+  image: curlimages/curl:8.6.0
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: always
+    - when: never
+  script:
+    - |
+      if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
+        echo "DISCORD_WEBHOOK_URL is not set (GitLab CI/CD variable)."
+        exit 1
+      fi
+
+      # Discord has a 2000 char limit for content.
+      SHORT_SHA="$(echo "$CI_COMMIT_SHA" | cut -c1-8)"
+      TITLE="Push sur main"
+      MSG="**${TITLE}**\nProjet: ${CI_PROJECT_PATH}\nAuteur: ${GITLAB_USER_NAME:-unknown}\nCommit: \`${SHORT_SHA}\`\nMessage: ${CI_COMMIT_MESSAGE}\nLien: ${CI_PROJECT_URL}/-/commit/${CI_COMMIT_SHA}"
+
+      # Escape JSON quotes/backslashes/newlines without jq.
+      JSON_CONTENT="$(printf '%s' "$MSG" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e ':a;N;$!ba;s/\n/\\n/g')"
+      curl -fsS -H "Content-Type: application/json" -d "{\"content\":\"${JSON_CONTENT}\"}" "$DISCORD_WEBHOOK_URL"
+
