@@ -10,7 +10,6 @@ route:
 
 receivers:
   - name: discord
-    discord_configs:
-      # REMPLACER par votre webhook Discord (créer dans Discord : Paramètres du salon → Intégrations → Webhooks)
-      - webhook_url: "https://discord.com/api/webhooks/1486032579613167829/543Ob00NiOcIqhQsIA7u1wmXMeV47lLPQ2BID8TxCjzGSu8-8fbuPmGr9kxykj5Ovqc8"
+    webhook_configs:
+      - url: http://alertmanager-discord:8000/alertmanager
         send_resolved: true

@@ -10,10 +10,13 @@ Surveillance du chat PHP et envoi d'alertes Discord en cas de down.
 4. Donnez un nom (ex. "Coolify Alertes")
 5. Cliquez sur **Copier l'URL du webhook**
 
-## 2. Configurer Alertmanager
+## 2. Configurer Discord dans Coolify (recommandé)
 
-1. Éditez `alertmanager.yml`
-2. Remplacez `https://discord.com/api/webhooks/VOTRE_WEBHOOK_ID/VOTRE_WEBHOOK_TOKEN` par l'URL copiée
+Ne mettez pas l'URL du webhook dans `alertmanager.yml`.
+
+Dans Coolify, ajoutez une variable d'environnement (ou Secret) :
+
+- `DISCORD_WEBHOOK_URL` = l'URL copiée depuis Discord
 
 ## 3. Déployer sur Coolify
 

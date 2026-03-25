@@ -27,6 +27,12 @@ services:
       - '--storage.path=/alertmanager'
     restart: unless-stopped
 
+  alertmanager-discord:
+    build: ./alertmanager-discord
+    environment:
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+    restart: unless-stopped
+
   blackbox:
     image: prom/blackbox-exporter:v0.24.0
     ports:
