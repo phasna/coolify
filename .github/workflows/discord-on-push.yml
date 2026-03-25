@@ -2,7 +2,6 @@ name: Discord notify on push
 
 on:
   push:
-    branches: ["main"]
 
 jobs:
   notify:
@@ -11,26 +10,30 @@ jobs:
       - name: Send Discord webhook
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          REPO: ${{ github.repository }}
-          ACTOR: ${{ github.actor }}
-          SHA: ${{ github.sha }}
-          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
             echo "Missing DISCORD_WEBHOOK_URL secret"
             exit 1
           fi
 
+          REPO="${GITHUB_REPOSITORY}"
+          ACTOR="${GITHUB_ACTOR}"
+          SHA="${GITHUB_SHA}"
+          BRANCH="${GITHUB_REF_NAME}"
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+
           SHORT_SHA="$(echo "$SHA" | cut -c1-8)"
           COMMIT_URL="https://github.com/${REPO}/commit/${SHA}"
 
           # Discord content max 2000 chars.
-          MSG="**Push sur main**\nRepo: ${REPO}\nAuteur: ${ACTOR}\nCommit: \`${SHORT_SHA}\`\nMessage: ${COMMIT_MSG}\nLien: ${COMMIT_URL}"
+          MSG="🔔 Push sur **${BRANCH}**\nRepo: ${REPO}\nAuteur: ${ACTOR}\nCommit: \`${SHORT_SHA}\`\nMessage: ${COMMIT_MSG}\nLien: ${COMMIT_URL}"
 
-          python - <<'PY'
+          MSG="$MSG" python3 - <<'PY'
 import json, os, urllib.request
+
 url = os.environ["DISCORD_WEBHOOK_URL"]
-msg = os.environ["MSG"] if "MSG" in os.environ else ""
+msg = os.environ.get("MSG", "")
+
 data = json.dumps({"content": msg[:1900]}).encode("utf-8")
 req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
 with urllib.request.urlopen(req, timeout=10) as resp:
@@ -39,6 +42,3 @@ with urllib.request.urlopen(req, timeout=10) as resp:
 print("ok")
 PY
         shell: bash
-        env:
-          MSG: ${{ format('**Push sur main**\nRepo: {0}\nAuteur: {1}\nCommit: `{2}`\nMessage: {3}\nLien: https://github.com/{0}/commit/{4}', github.repository, github.actor, github.sha, github.event.head_commit.message, github.sha) }}
-
