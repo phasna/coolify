@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Send Discord webhook
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.https://discord.com/api/webhooks/1486032579613167829/543Ob00NiOcIqhQsIA7u1wmXMeV47lLPQ2BID8TxCjzGSu8-8fbuPmGr9kxykj5Ovqc8 }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
             echo "Missing DISCORD_WEBHOOK_URL secret"
