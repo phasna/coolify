@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Send Discord webhook
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.https://discord.com/api/webhooks/1486032579613167829/543Ob00NiOcIqhQsIA7u1wmXMeV47lLPQ2BID8TxCjzGSu8-8fbuPmGr9kxykj5Ovqc8 }}
         run: |
           if [ -z "${DISCORD_WEBHOOK_URL:-}" ]; then
             echo "Missing DISCORD_WEBHOOK_URL secret"
@@ -28,17 +28,6 @@ jobs:
           # Discord content max 2000 chars.
           MSG="🔔 Push sur **${BRANCH}**\nRepo: ${REPO}\nAuteur: ${ACTOR}\nCommit: \`${SHORT_SHA}\`\nMessage: ${COMMIT_MSG}\nLien: ${COMMIT_URL}"
 
-          MSG="$MSG" python3 - <<'PY'
-import json, os, urllib.request
-
-url = os.environ["DISCORD_WEBHOOK_URL"]
-msg = os.environ.get("MSG", "")
-
-data = json.dumps({"content": msg[:1900]}).encode("utf-8")
-req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
-with urllib.request.urlopen(req, timeout=10) as resp:
-    if resp.status >= 400:
-        raise SystemExit(f"Discord webhook HTTP {resp.status}")
-print("ok")
-PY
+          payload="$(MSG="$MSG" python3 -c 'import json,os; print(json.dumps({"content": os.environ.get("MSG","")[:1900]}))')"
+          curl -sS -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL" >/dev/null
         shell: bash
